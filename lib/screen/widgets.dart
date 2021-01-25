@@ -103,33 +103,21 @@ class _PopupCardState extends State<PopupCard> {
   }
 }
 
-class ListItem extends StatefulWidget { //pasar a Stless
+class ListItem extends StatelessWidget {
   final Task task;
-  final void Function() checkCallbackFunction;
+  final void Function(bool value) checkCallbackFunction;
   ListItem({Key key, this.task, this.checkCallbackFunction}) : super(key: key);
-
-  @override
-  _ListItemState createState() => _ListItemState();
-}
-
-class _ListItemState extends State<ListItem> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: kItemListPadding,
       child: CheckboxListTile(
-          value: this.widget.task.getDone,
+          value: task.getDone,
           activeColor: kAccentColor,
-          onChanged: (bool value){
-            setState(() {
-              this.widget.task.setDone = value;
-            });
-            this.widget.checkCallbackFunction();
-          },
-          title: Text(this.widget.task.getName,
+          onChanged: checkCallbackFunction,
+          title: Text(task.getName,
               style: kFontFamily.copyWith(
-                  decoration: this.widget.task.getDone
+                  decoration: task.getDone
                       ? TextDecoration.lineThrough
                       : TextDecoration.none))),
     );
@@ -138,7 +126,7 @@ class _ListItemState extends State<ListItem> {
 
 class DynamicListViewBuilder extends StatelessWidget {
   final List<Task> listOfTasks;
-  final void Function() checkCallbackFunction;
+  final void Function(bool value, Task task) checkCallbackFunction;
   DynamicListViewBuilder(this.listOfTasks, this.checkCallbackFunction);
 
   @override
@@ -146,7 +134,7 @@ class DynamicListViewBuilder extends StatelessWidget {
     return ListView.builder(
       itemCount: listOfTasks.length,
       itemBuilder: (BuildContext context, int i) {
-        return ListItem(task: this.listOfTasks[i], checkCallbackFunction: checkCallbackFunction);
+        return ListItem(task: listOfTasks[i], checkCallbackFunction: ((value){checkCallbackFunction(value, listOfTasks[i]);}));
       },
     );
   }

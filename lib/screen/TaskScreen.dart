@@ -14,6 +14,7 @@ class _TaskScreenState extends State<TaskScreen> {
   List<Task> taskList = [];
   int numberOfTasksRemaining = 0;
   Widget get listContent {
+
     Widget noTasksWidget = Padding(
       child: Container(
           width: double.infinity,
@@ -22,13 +23,15 @@ class _TaskScreenState extends State<TaskScreen> {
           textAlign: TextAlign.center,)),
       padding: EdgeInsets.all(30),
     );
-    return taskList.isEmpty ? noTasksWidget : DynamicListViewBuilder(taskList, updateNumberOfTasks);
+
+    return taskList.isEmpty ? noTasksWidget : DynamicListViewBuilder(taskList, ((value, task){setState(() {
+      task.setDone = value;
+      updateNumberOfTasks();
+    });}));
   }
 
   void updateNumberOfTasks(){
-    setState(() {
-      numberOfTasksRemaining = remainingTasks;
-    });
+    numberOfTasksRemaining = remainingTasks;
   }
 
   int get remainingTasks{
