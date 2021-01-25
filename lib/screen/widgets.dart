@@ -105,36 +105,41 @@ class _PopupCardState extends State<PopupCard> {
 
 class ListItem extends StatelessWidget {
   final Task task;
-  final void Function(bool value) checkCallbackFunction;
-  ListItem({Key key, this.task, this.checkCallbackFunction}) : super(key: key);
+  final void Function(bool value) onTapCallback;
+  final void Function() onLongTapCallback;
+  ListItem({Key key, this.task, this.onTapCallback, this.onLongTapCallback}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: kItemListPadding,
-      child: CheckboxListTile(
-          value: task.getDone,
-          activeColor: kAccentColor,
-          onChanged: checkCallbackFunction,
-          title: Text(task.getName,
-              style: kFontFamily.copyWith(
-                  decoration: task.getDone
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none))),
+      child: GestureDetector(
+        onLongPress: onLongTapCallback,
+        child: CheckboxListTile(
+            value: task.getDone,
+            activeColor: kAccentColor,
+            onChanged: onTapCallback,
+            title: Text(task.getName,
+                style: kFontFamily.copyWith(
+                    decoration: task.getDone
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none))),
+      ),
     );
   }
 }
 
 class DynamicListViewBuilder extends StatelessWidget {
   final List<Task> listOfTasks;
-  final void Function(bool value, Task task) checkCallbackFunction;
-  DynamicListViewBuilder(this.listOfTasks, this.checkCallbackFunction);
+  final void Function(bool value, Task task) onTapCallback;
+  final void Function(int index) onLongTapCallback;
+  DynamicListViewBuilder(this.listOfTasks, this.onTapCallback, this.onLongTapCallback);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: listOfTasks.length,
       itemBuilder: (BuildContext context, int i) {
-        return ListItem(task: listOfTasks[i], checkCallbackFunction: ((value){checkCallbackFunction(value, listOfTasks[i]);}));
+        return ListItem(task: listOfTasks[i], onTapCallback: ((value){onTapCallback(value, listOfTasks[i]);}), onLongTapCallback: (){onLongTapCallback(i);},);
       },
     );
   }

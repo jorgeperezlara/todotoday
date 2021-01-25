@@ -14,29 +14,43 @@ class _TaskScreenState extends State<TaskScreen> {
   List<Task> taskList = [];
   int numberOfTasksRemaining = 0;
   Widget get listContent {
-
     Widget noTasksWidget = Padding(
       child: Container(
           width: double.infinity,
-          child: Text('No tasks! 🎉',
-              style: kFontFamily.copyWith(color: Colors.grey),
-          textAlign: TextAlign.center,)),
+          child: Text(
+            'No tasks! 🎉',
+            style: kFontFamily.copyWith(color: Colors.grey),
+            textAlign: TextAlign.center,
+          )),
       padding: EdgeInsets.all(30),
     );
 
-    return taskList.isEmpty ? noTasksWidget : DynamicListViewBuilder(taskList, ((value, task){setState(() {
-      task.setDone = value;
-      updateNumberOfTasks();
-    });}));
+    return taskList.isEmpty
+        ? noTasksWidget
+        : DynamicListViewBuilder(taskList, ((value, task) {
+            setState(() {
+              task.setDone = value;
+              updateNumberOfTasks();
+            });
+          }), ((index) {
+            removeListItem(index);
+          }));
   }
 
-  void updateNumberOfTasks(){
+  void removeListItem(int index) {
+    setState(() {
+      taskList.removeAt(index);
+      updateNumberOfTasks();
+    });
+  }
+
+  void updateNumberOfTasks() {
     numberOfTasksRemaining = remainingTasks;
   }
 
-  int get remainingTasks{
+  int get remainingTasks {
     int counter = 0;
-    for(var task in taskList){
+    for (var task in taskList) {
       task.getDone ? null : counter++;
     }
     return counter;
@@ -49,7 +63,9 @@ class _TaskScreenState extends State<TaskScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         floatingActionButton: FABadd(callback: () {
-          var newTask = Task.clone(Provider.of<Task>(context, listen: false)); //tenemos que clonarlo porque si no estaríamos metiendo recurrentemente el mismo objeto en la List y al cambiarlo cambiarían todos los items.
+          var newTask = Task.clone(Provider.of<Task>(context,
+              listen:
+                  false)); //tenemos que clonarlo porque si no estaríamos metiendo recurrentemente el mismo objeto en la List y al cambiarlo cambiarían todos los items.
           setState(() {
             taskList.add(newTask);
             numberOfTasksRemaining = remainingTasks;
@@ -70,7 +86,8 @@ class _TaskScreenState extends State<TaskScreen> {
                     Text('Todo Today',
                         style: kFontFamily.copyWith(
                             fontSize: kTitleSize, color: kBodyColor)),
-                    Text('$numberOfTasksRemaining tasks left out of ${taskList.length}',
+                    Text(
+                        '$numberOfTasksRemaining tasks left out of ${taskList.length}',
                         style: kFontFamily.copyWith(color: kBodyColor)),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
