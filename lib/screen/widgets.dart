@@ -67,35 +67,37 @@ class _PopupCardState extends State<PopupCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(borderRadius: kCardRadius),
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, top: 40, left: 40, right: 40),
-      child: Column(
-        children: [
-          Text('Add a new task',
-              style: kFontFamily.copyWith(
-                  fontSize: kCardTitle, color: kAccentColor)),
-          TextField(
-            style: kFontFamily,
-            cursorColor: kAccentColor,
-            textCapitalization: TextCapitalization.sentences,
-            onChanged: (String value) {
-              Provider.of<Task>(context, listen: false).setName = value;
-              Provider.of<Task>(context, listen: false).setDone = false;
-            },
-          ),
-          Padding(
-            padding: kButtonPadding,
-            child: Center(
-              child: TextButton(
-                  onPressed: this.widget.callback,
-                  child: Padding(child: Text('Add', style: kFontFamily),padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5)),
-                style: TextButton.styleFrom(backgroundColor: Colors.grey[300], primary: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
+    return Consumer<Task>(
+      builder: (context, taskData, child) => Container(
+        decoration: BoxDecoration(borderRadius: kCardRadius),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, top: 40, left: 40, right: 40),
+        child: Column(
+          children: [
+            Text('Add a new task',
+                style: kFontFamily.copyWith(
+                    fontSize: kCardTitle, color: kAccentColor)),
+            TextField(
+              style: kFontFamily,
+              cursorColor: kAccentColor,
+              textCapitalization: TextCapitalization.sentences,
+              onChanged: (String value) {
+                taskData.setName = value;
+                taskData.setDone = false;
+              },
             ),
-          ),
-        ],
-        crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: kButtonPadding,
+              child: Center(
+                child: TextButton(
+                    onPressed: this.widget.callback,
+                    child: Padding(child: Text('Add', style: kFontFamily),padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5)),
+                  style: TextButton.styleFrom(backgroundColor: Colors.grey[300], primary: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
+              ),
+            ),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ),
       ),
     );
   }

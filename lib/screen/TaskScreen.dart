@@ -50,6 +50,7 @@ class _TaskScreenState extends State<TaskScreen> {
           setState(() {
             taskList.add(newTask);
             numberOfTasksRemaining = remainingTasks;
+            Navigator.pop(context);
           });
         }),
         body: SafeArea(
