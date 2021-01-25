@@ -66,7 +66,7 @@ class _TaskScreenState extends State<TaskScreen> {
                     Text('Todo Today',
                         style: kFontFamily.copyWith(
                             fontSize: kTitleSize, color: kBodyColor)),
-                    Text('$numberOfTasksRemaining tasks left',
+                    Text('$numberOfTasksRemaining tasks left out of ${taskList.length}',
                         style: kFontFamily.copyWith(color: kBodyColor)),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
