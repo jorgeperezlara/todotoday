@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_ui_widgets/buttons/gradient_floating_action_button.dart';
+import 'package:provider/provider.dart';
 import 'package:todotoday/objects/tasks.dart';
 import '../constants.dart';
 import 'package:gradient_ui_widgets/icon/gradient_icon.dart';
@@ -20,9 +21,9 @@ class ListButton extends StatelessWidget {
 }
 
 class FABadd extends StatefulWidget {
-  final StringCallback parentStringCallback;
+  final void Function() callback;
 
-  const FABadd({Key key, this.parentStringCallback}) : super(key: key);
+  const FABadd({Key key, this.callback}) : super(key: key);
 
   @override
   _FABaddState createState() => _FABaddState();
@@ -45,7 +46,7 @@ class _FABaddState extends State<FABadd> {
           shape: RoundedRectangleBorder(borderRadius: kCardRadius),
           builder: (context) => SingleChildScrollView(
             child: PopupCard(
-              stringCallback: this.widget.parentStringCallback
+              callback: this.widget.callback
             ),
           ),
         );
@@ -55,15 +56,14 @@ class _FABaddState extends State<FABadd> {
 }
 
 class PopupCard extends StatefulWidget {
-  final StringCallback stringCallback;
-  PopupCard({Key key, this.stringCallback}) : super(key: key);
+  final void Function() callback;
+  PopupCard({Key key, this.callback}) : super(key: key);
 
   @override
   _PopupCardState createState() => _PopupCardState();
 }
 
 class _PopupCardState extends State<PopupCard> {
-  Task newTask;
 
   @override
   Widget build(BuildContext context) {
@@ -81,28 +81,19 @@ class _PopupCardState extends State<PopupCard> {
             cursorColor: kAccentColor,
             textCapitalization: TextCapitalization.sentences,
             onChanged: (String value) {
-              this.newTask = Task(value, false);
+              Provider.of<Task>(context, listen: false).setName = value;
+              Provider.of<Task>(context, listen: false).setDone = false;
             },
           ),
           Padding(
             padding: kButtonPadding,
             child: Center(
-              child: FlatButton(
-                  onPressed: () {
-                    if (newTask.name == null ||
-                        newTask.name == '' ||
-                        newTask.name.isEmpty) {
-                    } else {
-                      this.widget.stringCallback(newTask);
-                      setState(() {});
-                    }
-                  },
-                  child: Text('Add', style: kFontFamily),
-                  shape:
-                      RoundedRectangleBorder(borderRadius: kButtonRadius),
-                  color: Colors.grey[300]),
+              child: TextButton(
+                  onPressed: this.widget.callback,
+                  child: Padding(child: Text('Add', style: kFontFamily),padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5)),
+                style: TextButton.styleFrom(backgroundColor: Colors.grey[300], primary: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))),
             ),
-          )
+          ),
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
       ),
@@ -111,8 +102,8 @@ class _PopupCardState extends State<PopupCard> {
 }
 
 class ListItem extends StatefulWidget { //pasar a Stless
-  Task task;
-  void Function() checkCallbackFunction;
+  final Task task;
+  final void Function() checkCallbackFunction;
   ListItem({Key key, this.task, this.checkCallbackFunction}) : super(key: key);
 
   @override
@@ -126,34 +117,26 @@ class _ListItemState extends State<ListItem> {
     return Padding(
       padding: kItemListPadding,
       child: CheckboxListTile(
-          value: this.widget.task.done,
+          value: this.widget.task.getDone,
           activeColor: kAccentColor,
           onChanged: (bool value){
             setState(() {
-              this.widget.task.done = value;
+              this.widget.task.setDone = value;
             });
             this.widget.checkCallbackFunction();
           },
-          title: Text(this.widget.task.name,
+          title: Text(this.widget.task.getName,
               style: kFontFamily.copyWith(
-                  decoration: this.widget.task.done
+                  decoration: this.widget.task.getDone
                       ? TextDecoration.lineThrough
                       : TextDecoration.none))),
     );
   }
 }
 
-List<Widget> listViewContentBuilder(List<Task> tasks) {
-  List<Widget> listOfWidgets = [];
-  for (var text in tasks) {
-    listOfWidgets.add(ListItem(task: text));
-  }
-  return listOfWidgets;
-}
-
 class DynamicListViewBuilder extends StatelessWidget {
-  List<Task> listOfTasks;
-  void Function() checkCallbackFunction;
+  final List<Task> listOfTasks;
+  final void Function() checkCallbackFunction;
   DynamicListViewBuilder(this.listOfTasks, this.checkCallbackFunction);
 
   @override

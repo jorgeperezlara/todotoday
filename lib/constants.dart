@@ -14,5 +14,4 @@ const kCardPadding = EdgeInsets.all(40.0);
 const kItemListPadding = EdgeInsets.only(right: 20.0, left: 20.0, bottom: 5.0);
 const kButtonRadius = BorderRadius.all(Radius.circular(20));
 const kButtonPadding = EdgeInsets.all(20);
-typedef StringCallback = void Function(Task);
 const kSunriseGradient = LinearGradient(begin: Alignment.bottomLeft, end: Alignment.topRight, colors: [kYellowSunriseColor, kAccentColor]);

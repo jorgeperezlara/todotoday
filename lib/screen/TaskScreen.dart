@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:provider/provider.dart';
 import 'package:todotoday/constants.dart';
 import 'package:todotoday/objects/tasks.dart';
 import 'package:todotoday/screen/widgets.dart';
@@ -33,7 +34,7 @@ class _TaskScreenState extends State<TaskScreen> {
   int get remainingTasks{
     int counter = 0;
     for(var task in taskList){
-      task.done ? null : counter++;
+      task.getDone ? null : counter++;
     }
     return counter;
   }
@@ -44,9 +45,10 @@ class _TaskScreenState extends State<TaskScreen> {
       decoration: BoxDecoration(gradient: kSunriseGradient),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        floatingActionButton: FABadd(parentStringCallback: (value) {
+        floatingActionButton: FABadd(callback: () {
+          var newTask = Task.clone(Provider.of<Task>(context, listen: false)); //tenemos que clonarlo porque si no estaríamos metiendo recurrentemente el mismo objeto en la List y al cambiarlo cambiarían todos los items.
           setState(() {
-            taskList.add(Task(value.name, value.done));
+            taskList.add(newTask);
             numberOfTasksRemaining = remainingTasks;
           });
         }),
